@@ -1,0 +1,53 @@
+version: '3'
+
+services: 
+  etcd-1:
+    build: .
+    container_name: etcd-1
+    command: 'tail -f /dev/null'
+    # command: make run
+    volumes: 
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - ./Makefile:/app/Makefile
+    environment: 
+      - NAME=etcd-1
+      - ADVERTISE_PEER_URLS=http://etcd-1:2379
+      - INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - INITIAL_ADVERTISE_PEER_URLS=http://etcd-1:2380
+    networks:
+      - etcd
+  
+  etcd-2:
+    build: .
+    container_name: etcd-2
+    command: 'tail -f /dev/null'
+    # command: make run
+    volumes: 
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - ./Makefile:/app/Makefile
+    environment: 
+      - NAME=etcd-2
+      - ADVERTISE_PEER_URLS=http://etcd-2:2379
+      - INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - INITIAL_ADVERTISE_PEER_URLS=http://etcd-2:2380
+    networks:
+      - etcd
+
+  etcd-3:
+    build: .
+    container_name: etcd-3
+    command: 'tail -f /dev/null'
+    # command: make run
+    volumes: 
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - ./Makefile:/app/Makefile
+    environment: 
+      - NAME=etcd-3
+      - ADVERTISE_PEER_URLS=http://etcd-3:2379
+      - INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - INITIAL_ADVERTISE_PEER_URLS=http://etcd-3:2380
+    networks:
+      - etcd
+
+networks: 
+  etcd:
